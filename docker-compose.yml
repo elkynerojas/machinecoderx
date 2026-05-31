@@ -1,0 +1,86 @@
+services:
+  app:
+    build:
+      context: ./docker/app
+    env_file: .env
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: machinecoderx
+      DB_USERNAME: redsoft
+      DB_PASSWORD: secret
+      APP_URL: http://localhost
+    volumes:
+      - .:/var/www/html
+      - vendor_cache:/var/www/html/vendor
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - machinecoderx
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - machinecoderx
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: machinecoderx
+      MYSQL_USER: redsoft
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root_secret
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uredsoft", "-psecret"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - machinecoderx
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: redsoft
+      PMA_PASSWORD: secret
+    depends_on:
+      - mysql
+    networks:
+      - machinecoderx
+
+  node:
+    image: node:22-alpine
+    working_dir: /app
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - node_modules_cache:/app/node_modules
+    command: sh -c "npm install && npm run dev"
+    networks:
+      - machinecoderx
+
+networks:
+  machinecoderx:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  vendor_cache:
+  node_modules_cache:
