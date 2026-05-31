@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import CourseSidebar from '@/Components/Course/CourseSidebar';
 import LessonPlayer from '@/Components/Course/LessonPlayer';
 import LessonContent from '@/Components/Course/LessonContent';
@@ -8,6 +8,21 @@ export default function Show({ course, currentLessonId, completedIds: initialCom
     const [completedIds, setCompletedIds] = useState(initialCompleted);
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [marking, setMarking] = useState(false);
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const userMenuRef = useRef(null);
+    const { auth } = usePage().props;
+    const user = auth?.user;
+    const initials = user?.name?.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase() ?? '?';
+
+    useEffect(() => {
+        const handler = (e) => {
+            if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+                setUserMenuOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, []);
 
     const allLessons = useMemo(
         () => course.sections.flatMap(s => s.lessons),
@@ -80,6 +95,59 @@ export default function Show({ course, currentLessonId, completedIds: initialCom
 
                     <h1 className="text-sm font-medium text-gray-300 truncate flex-1">{course.title}</h1>
 
+                    {/* Inicio */}
+                    <Link
+                        href={route('home')}
+                        className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition flex-shrink-0"
+                    >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                        Inicio
+                    </Link>
+
+                    {/* User menu */}
+                    {user && (
+                        <div className="relative flex-shrink-0" ref={userMenuRef}>
+                            <button
+                                onClick={() => setUserMenuOpen(v => !v)}
+                                className="w-8 h-8 rounded-full bg-violet-600 text-white text-xs font-bold flex items-center justify-center hover:bg-violet-500 transition"
+                            >
+                                {initials}
+                            </button>
+
+                            {userMenuOpen && (
+                                <div className="absolute right-0 top-10 w-48 bg-gray-800 border border-gray-700 rounded-xl shadow-xl py-1 z-50">
+                                    <div className="px-4 py-2 border-b border-gray-700">
+                                        <p className="text-xs font-medium text-white truncate">{user.name}</p>
+                                        <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                                    </div>
+                                    <Link
+                                        href={route('profile.edit')}
+                                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 transition"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                        Mi perfil
+                                    </Link>
+                                    <button
+                                        onClick={() => router.post(route('logout'))}
+                                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 transition"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        Cerrar sesión
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    <div className="h-5 w-px bg-gray-700 flex-shrink-0" />
+
+                    {/* Sidebar toggle */}
                     <button
                         onClick={() => setSidebarOpen(v => !v)}
                         className="flex-shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition"
