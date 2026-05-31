@@ -1,4 +1,5 @@
 import InputError from '@/Components/InputError';
+import GoogleButton from '@/Components/Landing/GoogleButton';
 import AuthLayout from '@/Layouts/AuthLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
@@ -37,6 +38,10 @@ export default function Login({ status, canResetPassword }) {
                     {status}
                 </div>
             )}
+
+            <div className="space-y-4 mb-6">
+                <GoogleButton />
+            </div>
 
             <form onSubmit={submit} className="space-y-5">
                 <div>
