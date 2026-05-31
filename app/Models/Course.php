@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\CourseLevel;
+use App\Enums\CourseStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -44,5 +46,14 @@ class Course extends Model
     public function ratings(): HasMany
     {
         return $this->hasMany(Rating::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'level' => CourseLevel::class,
+            'status' => CourseStatus::class,
+            'price' => 'decimal:2',
+        ];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\SubscriptionPeriod;
+use App\Enums\SubscriptionStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,12 +18,15 @@ class Subscription extends Model
 
     public function isActive(): bool
     {
-        return $this->status === 'active' && $this->current_period_end->isFuture();
+        return $this->status === SubscriptionStatus::Active
+            && $this->current_period_end->isFuture();
     }
 
     protected function casts(): array
     {
         return [
+            'period' => SubscriptionPeriod::class,
+            'status' => SubscriptionStatus::class,
             'current_period_start' => 'datetime',
             'current_period_end' => 'datetime',
             'canceled_at' => 'datetime',
