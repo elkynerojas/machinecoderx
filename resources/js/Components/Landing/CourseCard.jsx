@@ -44,7 +44,7 @@ function Avatar({ name }) {
     );
 }
 
-export default function CourseCard({ course, hasSubscription, categoryIndex = 0 }) {
+export default function CourseCard({ course, hasSubscription, categoryIndex = 0, onClick }) {
     const level = LEVEL_STYLES[course.level] ?? { label: course.level, classes: 'bg-gray-100 text-gray-600' };
     const gradient = CATEGORY_GRADIENTS[categoryIndex % CATEGORY_GRADIENTS.length];
     const avgRating = course.ratings?.length
@@ -52,7 +52,9 @@ export default function CourseCard({ course, hasSubscription, categoryIndex = 0 
         : 0;
 
     return (
-        <div className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col">
+        <Link
+            href={route('course.show', course.slug)}
+            className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col">
             {/* Thumbnail */}
             <div className="relative aspect-video overflow-hidden">
                 {course.thumbnail ? (
@@ -138,6 +140,6 @@ export default function CourseCard({ course, hasSubscription, categoryIndex = 0 
                     )}
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }
