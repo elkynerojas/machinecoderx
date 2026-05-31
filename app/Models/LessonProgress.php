@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 #[Fillable(['user_id', 'lesson_id', 'completed_at'])]
 class LessonProgress extends Model
 {
+    use HasFactory;
     public $timestamps = false;
 
     public function user(): BelongsTo

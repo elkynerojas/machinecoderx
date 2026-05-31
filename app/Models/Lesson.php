@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 #[Fillable(['section_id', 'title', 'order', 'type', 'video_type', 'video_url', 'video_path', 'duration_seconds', 'content', 'is_free_preview'])]
 class Lesson extends Model
 {
+    use HasFactory;
     public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class);

@@ -9,10 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 #[Fillable(['instructor_id', 'category_id', 'title', 'slug', 'description', 'thumbnail', 'level', 'status', 'price'])]
 class Course extends Model
 {
+    use HasFactory;
     public function instructor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'instructor_id');

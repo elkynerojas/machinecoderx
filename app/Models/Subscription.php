@@ -7,10 +7,12 @@ use App\Enums\SubscriptionStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 #[Fillable(['user_id', 'stripe_customer_id', 'stripe_subscription_id', 'period', 'status', 'current_period_start', 'current_period_end', 'canceled_at'])]
 class Subscription extends Model
 {
+    use HasFactory;
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

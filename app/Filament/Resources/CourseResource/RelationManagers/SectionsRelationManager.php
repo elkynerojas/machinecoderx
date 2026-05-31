@@ -8,6 +8,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use App\Filament\Resources\SectionResource;
 use Filament\Actions;
 
 class SectionsRelationManager extends RelationManager
@@ -26,6 +27,9 @@ class SectionsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->headerActions([
+                Actions\CreateAction::make(),
+            ])
             ->reorderable('order')
             ->columns([
                 TextColumn::make('order')->label('#')->sortable(),
@@ -33,6 +37,10 @@ class SectionsRelationManager extends RelationManager
                 TextColumn::make('lessons_count')->label('Lecciones')->counts('lessons'),
             ])
             ->actions([
+                Actions\Action::make('manage_lessons')
+                    ->label('Lecciones')
+                    ->icon('heroicon-o-academic-cap')
+                    ->url(fn ($record) => SectionResource::getUrl('edit', ['record' => $record])),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ])
