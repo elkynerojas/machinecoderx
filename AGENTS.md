@@ -2,7 +2,7 @@
 
 ## Repo Reality
 - Source code not yet scaffolded; `Requirements.md` and `Requirements.txt` are the only specs. Treat `Requirements.md` as canonical when making product/architecture decisions.
-- CodeGraph index is missing. Run `codegraph init -i` after the first real code drop so future agents can query symbols quickly.
+- CodeGraph index lives in `.codegraph/` (gitignored). Use `codegraph sync` for incremental updates after a pull or local edits, and `codegraph index -f` for a full re-index after large refactors. The opencode MCP server in `~/.config/opencode/opencode.jsonc` picks it up automatically.
 
 ## Stack Expectations (from Requirements)
 - Single Laravel 11 monolith (PHP 8.3+) using Inertia.js with React components; no split backend/frontend deployments.
